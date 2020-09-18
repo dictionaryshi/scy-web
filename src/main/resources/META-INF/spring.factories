@@ -1,0 +1,8 @@
+#自动配置类
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.scy.web.config.WebConfig\
+
+#启动监听
+org.springframework.boot.SpringApplicationRunListener=\
+com.scy.web.config.SpringBootRunListener\
+
