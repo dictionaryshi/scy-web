@@ -5,6 +5,7 @@ import com.scy.core.StringUtil;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.stream.Stream;
 
 /**
@@ -30,5 +31,19 @@ public class CookieUtil {
                 .orElse(null);
 
         return findCookie == null ? StringUtil.EMPTY : findCookie.getValue();
+    }
+
+    public static void sendCookie(
+            HttpServletResponse response,
+            String name,
+            String value,
+            String domain
+    ) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setDomain(domain);
+        cookie.setMaxAge(-1);
+        cookie.setPath("/");
+        cookie.setHttpOnly(Boolean.TRUE);
+        response.addCookie(cookie);
     }
 }
