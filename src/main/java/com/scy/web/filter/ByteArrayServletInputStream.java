@@ -1,4 +1,4 @@
-package com.scy.web.config.filter;
+package com.scy.web.filter;
 
 import com.scy.core.format.NumberUtil;
 
