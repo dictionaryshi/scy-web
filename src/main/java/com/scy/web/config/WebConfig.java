@@ -2,11 +2,16 @@ package com.scy.web.config;
 
 import com.scy.core.enums.OrderEnum;
 import com.scy.web.filter.WebFilter;
+import com.scy.web.util.HttpMessageConverterUtil;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.unit.DataSize;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.MultipartConfigElement;
 import java.util.Collections;
 
@@ -17,6 +22,14 @@ import java.util.Collections;
  * Created by shichunyang on 2020/9/18.
  */
 public class WebConfig {
+
+    @Autowired
+    private ObjectFactory<HttpMessageConverters> httpMessageConvertersObjectFactory;
+
+    @PostConstruct
+    public void afterHttpMessageConvertersObjectFactoryAutowired() {
+        httpMessageConvertersObjectFactory.getObject().getConverters().forEach(HttpMessageConverterUtil::initHttpMessageConverter);
+    }
 
     @Bean
     public CloseApplicationListener closeApplicationListener() {
