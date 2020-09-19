@@ -1,6 +1,7 @@
 package com.scy.web.filter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.net.HttpHeaders;
 import com.scy.core.ArrayUtil;
 import com.scy.core.CollectionUtil;
 import com.scy.core.ObjectUtil;
@@ -11,6 +12,7 @@ import com.scy.web.util.HttpParameterUtil;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
@@ -35,6 +37,9 @@ public class WebFilter implements Filter {
             FilterHttpServletRequest filterHttpServletRequest = new FilterHttpServletRequest((HttpServletRequest) servletRequest);
 
             init(filterHttpServletRequest);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+            httpServletResponse.setHeader(HttpHeaders.X_FRAME_OPTIONS, "DENY");
 
             filterChain.doFilter(filterHttpServletRequest, servletResponse);
         } finally {
