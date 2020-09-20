@@ -8,6 +8,7 @@ import com.scy.core.format.MessageUtil;
 import com.scy.core.model.JoinPointBO;
 import com.scy.core.spring.JoinPointUtil;
 import com.scy.web.model.RequestLogAO;
+import com.scy.web.util.ExceptionHandlerUtil;
 import com.scy.web.util.IpUtil;
 import com.scy.web.util.LoginUtil;
 import com.scy.web.util.RsaCheckUtil;
@@ -80,7 +81,7 @@ public class ControllerAspect {
                     "params", requestLogAO.getJoinPointBO().getParams(), StringUtil.COST, System.currentTimeMillis() - requestLogAO.getStartTime(), "result", result));
             return result;
         } catch (Throwable throwable) {
-            return null;
+            return ExceptionHandlerUtil.exception2ResponseResult(requestLogAO.getRequest(), throwable);
         }
     }
 
