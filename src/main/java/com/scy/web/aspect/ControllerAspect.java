@@ -9,6 +9,7 @@ import com.scy.core.model.JoinPointBO;
 import com.scy.core.spring.JoinPointUtil;
 import com.scy.web.model.RequestLogAO;
 import com.scy.web.util.IpUtil;
+import com.scy.web.util.LoginUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -68,12 +69,15 @@ public class ControllerAspect {
                 "params", requestLogAO.getJoinPointBO().getParams()));
 
         try {
+            LoginUtil.loginCheck(requestLogAO.getRequest(), requestLogAO.getJoinPointBO().getMethod());
+
             Object result = proceedingJoinPoint.proceed();
             log.info(MessageUtil.format("http response",
                     "ip", requestLogAO.getIp(), "url", requestLogAO.getRequest().getRequestURL().toString(), "method", requestLogAO.getJoinPointBO().getMethodName(),
                     "params", requestLogAO.getJoinPointBO().getParams(), StringUtil.COST, System.currentTimeMillis() - requestLogAO.getStartTime(), "result", result));
             return result;
         } catch (Throwable throwable) {
+            return null;
         }
     }
 
