@@ -10,6 +10,7 @@ import com.scy.core.spring.JoinPointUtil;
 import com.scy.web.model.RequestLogAO;
 import com.scy.web.util.IpUtil;
 import com.scy.web.util.LoginUtil;
+import com.scy.web.util.RsaCheckUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -70,6 +71,8 @@ public class ControllerAspect {
 
         try {
             LoginUtil.loginCheck(requestLogAO.getRequest(), requestLogAO.getJoinPointBO().getMethod());
+
+            RsaCheckUtil.signCheck(requestLogAO.getRequest(), requestLogAO.getJoinPointBO().getMethod());
 
             Object result = proceedingJoinPoint.proceed();
             log.info(MessageUtil.format("http response",
