@@ -68,7 +68,7 @@ public class ControllerAspect {
 
         log.info(MessageUtil.format("http request",
                 "ip", requestLogAO.getIp(), "url", requestLogAO.getRequest().getRequestURL().toString(), "method", requestLogAO.getJoinPointBO().getMethodName(),
-                "params", requestLogAO.getJoinPointBO().getParams()));
+                "params", requestLogAO.getJoinPointBO().getParams().toString()));
 
         try {
             LoginUtil.loginCheck(requestLogAO.getRequest(), requestLogAO.getJoinPointBO().getMethod());
@@ -78,7 +78,7 @@ public class ControllerAspect {
             Object result = proceedingJoinPoint.proceed();
             log.info(MessageUtil.format("http response",
                     "ip", requestLogAO.getIp(), "url", requestLogAO.getRequest().getRequestURL().toString(), "method", requestLogAO.getJoinPointBO().getMethodName(),
-                    "params", requestLogAO.getJoinPointBO().getParams(), StringUtil.COST, System.currentTimeMillis() - requestLogAO.getStartTime(), "result", result));
+                    "params", requestLogAO.getJoinPointBO().getParams().toString(), StringUtil.COST, System.currentTimeMillis() - requestLogAO.getStartTime(), "result", result));
             return result;
         } catch (Throwable throwable) {
             return ExceptionHandlerUtil.exception2ResponseResult(requestLogAO.getRequest(), throwable);

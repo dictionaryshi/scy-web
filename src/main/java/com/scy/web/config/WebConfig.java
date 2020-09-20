@@ -60,4 +60,9 @@ public class WebConfig {
     public ControllerAspect controllerAspect() {
         return new ControllerAspect();
     }
+
+    @Bean
+    public WebMvcConfig webMvcConfig() {
+        return new WebMvcConfig();
+    }
 }
