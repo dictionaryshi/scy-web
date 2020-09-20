@@ -1,6 +1,7 @@
 package com.scy.web.aspect;
 
 import com.scy.core.ObjectUtil;
+import com.scy.core.StringUtil;
 import com.scy.core.enums.ResponseCodeEnum;
 import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
@@ -67,7 +68,11 @@ public class ControllerAspect {
                 "params", requestLogAO.getJoinPointBO().getParams()));
 
         try {
-            return proceedingJoinPoint.proceed();
+            Object result = proceedingJoinPoint.proceed();
+            log.info(MessageUtil.format("http response",
+                    "ip", requestLogAO.getIp(), "url", requestLogAO.getRequest().getRequestURL().toString(), "method", requestLogAO.getJoinPointBO().getMethodName(),
+                    "params", requestLogAO.getJoinPointBO().getParams(), StringUtil.COST, System.currentTimeMillis() - requestLogAO.getStartTime(), "result", result));
+            return result;
         } catch (Throwable throwable) {
         }
     }
