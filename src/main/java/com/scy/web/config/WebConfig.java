@@ -1,6 +1,7 @@
 package com.scy.web.config;
 
 import com.scy.core.enums.OrderEnum;
+import com.scy.web.aspect.ControllerAspect;
 import com.scy.web.filter.WebFilter;
 import com.scy.web.util.HttpMessageConverterUtil;
 import org.springframework.beans.factory.ObjectFactory;
@@ -53,5 +54,10 @@ public class WebConfig {
         filterRegistrationBean.setUrlPatterns(Collections.singletonList("/*"));
         filterRegistrationBean.setOrder(OrderEnum.SYSTEM_START.getOrder());
         return filterRegistrationBean;
+    }
+
+    @Bean
+    public ControllerAspect controllerAspect() {
+        return new ControllerAspect();
     }
 }
