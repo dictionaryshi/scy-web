@@ -1,9 +1,23 @@
 package com.scy.web.aspect;
 
+import com.scy.core.ObjectUtil;
+import com.scy.core.enums.ResponseCodeEnum;
+import com.scy.core.exception.BusinessException;
+import com.scy.core.format.MessageUtil;
+import com.scy.core.model.JoinPointBO;
+import com.scy.core.spring.JoinPointUtil;
+import com.scy.web.model.RequestLogAO;
+import com.scy.web.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * ControllerAspect
@@ -30,5 +44,40 @@ public class ControllerAspect {
             + ") && !execution(* com.scy..feign.*.*(..)) "
     )
     public void pointcut() {
+    }
+
+    @Around("pointcut()")
+    public Object around(ProceedingJoinPoint proceedingJoinPoint) {
+        HttpServletRequest request = getRequest();
+
+        RequestLogAO requestLogAO = new RequestLogAO();
+        requestLogAO.setRequest(request);
+
+        JoinPointBO joinPointBO = JoinPointUtil.getJoinPointBO(proceedingJoinPoint);
+        requestLogAO.setJoinPointBO(joinPointBO);
+
+        long startTime = System.currentTimeMillis();
+        requestLogAO.setStartTime(startTime);
+
+        String ip = IpUtil.getIp(request);
+        requestLogAO.setIp(ip);
+
+        log.info(MessageUtil.format("http request",
+                "ip", requestLogAO.getIp(), "url", requestLogAO.getRequest().getRequestURL().toString(), "method", requestLogAO.getJoinPointBO().getMethodName(),
+                "params", requestLogAO.getJoinPointBO().getParams()));
+
+        try {
+            return proceedingJoinPoint.proceed();
+        } catch (Throwable throwable) {
+        }
+    }
+
+    private HttpServletRequest getRequest() {
+        ServletRequestAttributes servletRequestAttributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (ObjectUtil.isNull(servletRequestAttributes)) {
+            throw new BusinessException(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), "getRequest error");
+        }
+        return servletRequestAttributes.getRequest();
     }
 }
