@@ -26,7 +26,7 @@ public class ExceptionHandlerUtil {
             HttpServletRequest request,
             Throwable throwable
     ) {
-        ResponseResult<?> result = ResponseResult.error(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), ResponseCodeEnum.SYSTEM_EXCEPTION.getMessage(), null);
+        ResponseResult<?> result = ResponseResult.error(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), throwable.getMessage(), null);
         if (!StringUtil.isEmpty(throwable.getMessage()) && throwable.getMessage().toLowerCase().contains(BROKEN_PIPE)) {
             log.warn(MessageUtil.format(BROKEN_PIPE, throwable, "url", request.getRequestURL().toString()));
         } else {

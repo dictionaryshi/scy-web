@@ -61,7 +61,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 outputStream.write(JsonUtil.object2Json(responseResult).getBytes());
                 outputStream.flush();
             } catch (IOException e) {
-                log.error(MessageUtil.format("extendHandlerExceptionResolvers io error", e));
+                log.warn(MessageUtil.format("extendHandlerExceptionResolvers io error", e));
             }
 
             return new ModelAndView();
