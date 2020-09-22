@@ -52,7 +52,7 @@ public class ExceptionHandlerUtil {
     }
 
     private static ResponseResult<?> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException httpRequestMethodNotSupportedException) {
-        ResponseResult<?> responseResult = ResponseResult.error(ResponseCodeEnum.PARAMS_EXCEPTION.getCode(), MessageUtil.format(httpRequestMethodNotSupportedException.getMessage(),
+        ResponseResult<?> responseResult = ResponseResult.error(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), MessageUtil.format(httpRequestMethodNotSupportedException.getMessage(),
                 "supportedMethods", Arrays.toString(httpRequestMethodNotSupportedException.getSupportedMethods())), null);
         log.info(MessageUtil.format("httpRequestMethodNotSupportedException", "result", responseResult.toString()));
         return responseResult;
