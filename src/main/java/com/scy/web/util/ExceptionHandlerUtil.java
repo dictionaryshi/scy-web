@@ -6,9 +6,12 @@ import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.rest.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +52,14 @@ public class ExceptionHandlerUtil {
             return handleBindException((BindException) throwable);
         }
 
+        if (throwable instanceof HttpMessageNotReadableException) {
+            return handleHttpMessageNotReadableException((HttpMessageNotReadableException) throwable);
+        }
+
+        if (throwable instanceof MethodArgumentNotValidException) {
+            return handleMethodArgumentNotValidException((MethodArgumentNotValidException) throwable);
+        }
+
         ResponseResult<?> result = ResponseResult.error(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), throwable.getMessage(), null);
         if (!StringUtil.isEmpty(throwable.getMessage()) && throwable.getMessage().toLowerCase().contains(BROKEN_PIPE)) {
             log.warn(MessageUtil.format(BROKEN_PIPE, throwable, "url", request.getRequestURL().toString()));
@@ -56,6 +67,24 @@ public class ExceptionHandlerUtil {
             log.error(MessageUtil.format("http error", throwable, "url", request.getRequestURL().toString()));
         }
         return result;
+    }
+
+    private static ResponseResult<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException methodArgumentNotValidException) {
+        BindingResult bindingResult = methodArgumentNotValidException.getBindingResult();
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        FieldError fieldError = fieldErrors.get(0);
+        ResponseResult<?> responseResult = ResponseResult.error(ResponseCodeEnum.PARAMS_EXCEPTION.getCode(), MessageUtil.format("methodArgumentNotValidException",
+                "field", fieldError.getField(), "value", fieldError.getRejectedValue() == null ? null : fieldError.getRejectedValue().toString(),
+                "message", fieldError.getDefaultMessage()), null);
+        log.info(MessageUtil.format("methodArgumentNotValidException", "result", responseResult.toString()));
+        return responseResult;
+    }
+
+    private static ResponseResult<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException httpMessageNotReadableException) {
+        ResponseResult<?> responseResult = ResponseResult.error(ResponseCodeEnum.PARAMS_EXCEPTION.getCode(), MessageUtil.format("httpMessageNotReadableException",
+                "message", httpMessageNotReadableException.getMessage()), null);
+        log.info(MessageUtil.format("httpMessageNotReadableException", "result", responseResult.toString()));
+        return responseResult;
     }
 
     private static ResponseResult<?> handleBindException(BindException bindException) {
