@@ -1,5 +1,6 @@
 package com.scy.web.util;
 
+import com.scy.core.ObjectUtil;
 import com.scy.core.StringUtil;
 import com.scy.core.enums.ResponseCodeEnum;
 import com.scy.core.exception.BusinessException;
@@ -13,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -60,6 +62,10 @@ public class ExceptionHandlerUtil {
             return handleMethodArgumentNotValidException((MethodArgumentNotValidException) throwable);
         }
 
+        if (throwable instanceof MethodArgumentTypeMismatchException) {
+            return handleMethodArgumentTypeMismatchException((MethodArgumentTypeMismatchException) throwable);
+        }
+
         ResponseResult<?> result = ResponseResult.error(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), throwable.getMessage(), null);
         if (!StringUtil.isEmpty(throwable.getMessage()) && throwable.getMessage().toLowerCase().contains(BROKEN_PIPE)) {
             log.warn(MessageUtil.format(BROKEN_PIPE, throwable, "url", request.getRequestURL().toString()));
@@ -67,6 +73,13 @@ public class ExceptionHandlerUtil {
             log.error(MessageUtil.format("http error", throwable, "url", request.getRequestURL().toString()));
         }
         return result;
+    }
+
+    private static ResponseResult<?> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException methodArgumentTypeMismatchException) {
+        ResponseResult<?> responseResult = ResponseResult.error(ResponseCodeEnum.PARAMS_EXCEPTION.getCode(), MessageUtil.format("methodArgumentTypeMismatchException",
+                "field", methodArgumentTypeMismatchException.getName(), "value", ObjectUtil.obj2Str(methodArgumentTypeMismatchException.getValue())), null);
+        log.info(MessageUtil.format("methodArgumentTypeMismatchException", "result", responseResult.toString()));
+        return responseResult;
     }
 
     private static ResponseResult<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException methodArgumentNotValidException) {
