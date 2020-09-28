@@ -1,12 +1,14 @@
 package com.scy.web.config;
 
 import com.scy.core.format.MessageUtil;
+import com.scy.core.spring.ApplicationContextUtil;
 import com.scy.core.thread.ThreadPoolUtil;
 import com.scy.web.util.TomcatThreadPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -31,5 +33,14 @@ public class CloseApplicationListener implements ApplicationListener<ContextClos
         } catch (Throwable e) {
             log.error(MessageUtil.format("thread pool shutdown error", e, "poolName", poolName, "thread", Thread.currentThread().getName()));
         }
+
+        Map<String, ThreadPoolExecutor> threadPoolExecutorMap = ApplicationContextUtil.getBeansOfType(ThreadPoolExecutor.class);
+        threadPoolExecutorMap.forEach((poolBeanName, threadPoolExecutor) -> {
+            try {
+                ThreadPoolUtil.shutdown(threadPoolExecutor, poolBeanName);
+            } catch (Throwable e) {
+                log.error(MessageUtil.format("thread pool shutdown error", e, "poolBeanName", poolBeanName, "thread", Thread.currentThread().getName()));
+            }
+        });
     }
 }
