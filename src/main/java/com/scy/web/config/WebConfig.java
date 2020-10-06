@@ -1,7 +1,9 @@
 package com.scy.web.config;
 
 import com.scy.core.enums.OrderEnum;
+import com.scy.core.thread.ThreadPoolUtil;
 import com.scy.web.aspect.ControllerAspect;
+import com.scy.web.aspect.ResubmitCheckAspect;
 import com.scy.web.filter.WebFilter;
 import com.scy.web.util.HttpMessageConverterUtil;
 import org.springframework.beans.factory.ObjectFactory;
@@ -15,6 +17,7 @@ import org.springframework.util.unit.DataSize;
 import javax.annotation.PostConstruct;
 import javax.servlet.MultipartConfigElement;
 import java.util.Collections;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * WebConfig
@@ -64,5 +67,15 @@ public class WebConfig {
     @Bean
     public WebMvcConfig webMvcConfig() {
         return new WebMvcConfig();
+    }
+
+    @Bean
+    public ThreadPoolExecutor zkLockThreadPoolExecutor() {
+        return ThreadPoolUtil.getThreadPool("zk-lock", 1, 1, 10);
+    }
+
+    @Bean
+    public ResubmitCheckAspect resubmitCheckAspect() {
+        return new ResubmitCheckAspect();
     }
 }
