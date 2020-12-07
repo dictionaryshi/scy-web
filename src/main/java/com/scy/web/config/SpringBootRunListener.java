@@ -1,6 +1,7 @@
 package com.scy.web.config;
 
 import com.scy.core.spring.ApplicationContextUtil;
+import com.scy.core.trace.TraceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
@@ -17,6 +18,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 public class SpringBootRunListener implements SpringApplicationRunListener {
 
     public SpringBootRunListener(SpringApplication springApplication, String[] args) {
+        TraceUtil.setTraceId("application start");
     }
 
     @Override
@@ -42,5 +44,6 @@ public class SpringBootRunListener implements SpringApplicationRunListener {
 
     @Override
     public void running(ConfigurableApplicationContext context) {
+        TraceUtil.clearTrace();
     }
 }
