@@ -7,7 +7,7 @@ import com.scy.core.exception.BusinessException;
 import com.scy.core.reflect.AnnotationUtil;
 import com.scy.core.thread.ThreadLocalUtil;
 import com.scy.web.annotation.LoginCheck;
-import com.scy.web.model.UserBO;
+import com.scy.web.model.UserTokenBO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -48,11 +48,11 @@ public class LoginUtil {
         return loginToken;
     }
 
-    public static UserBO getLoginUser() {
-        return (UserBO) ThreadLocalUtil.get(LOGIN_USER);
+    public static UserTokenBO getLoginUser() {
+        return (UserTokenBO) ThreadLocalUtil.get(LOGIN_USER);
     }
 
-    public static void setLoginUser(UserBO userBO) {
+    public static void setLoginUser(UserTokenBO userBO) {
         ThreadLocalUtil.put(LOGIN_USER, userBO);
     }
 
@@ -69,7 +69,7 @@ public class LoginUtil {
             throw new BusinessException(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), "getToken error");
         }
 
-        UserBO userBO = new UserBO();
+        UserTokenBO userBO = new UserTokenBO();
 
         setLoginUser(userBO);
     }
