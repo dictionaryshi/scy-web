@@ -67,7 +67,7 @@ public class RsaCheckUtil {
             throw new BusinessException(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), "appkey not exist");
         }
 
-        Long timestamp = ObjectUtil.obj2Long(paramMap.get(TIMESTAMP));
+        Long timestamp = ObjectUtil.obj2Long(paramMap.get(TIMESTAMP), null);
         if (ObjectUtil.isNull(timestamp)) {
             throw new BusinessException(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), "timestamp get error");
         }
