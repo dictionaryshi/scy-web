@@ -3,6 +3,7 @@ package com.scy.web.config;
 import com.scy.core.spring.ApplicationContextUtil;
 import com.scy.core.trace.TraceUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -22,11 +23,12 @@ public class SpringBootRunListener implements SpringApplicationRunListener {
     }
 
     @Override
-    public void starting() {
+    public void starting(ConfigurableBootstrapContext bootstrapContext) {
     }
 
     @Override
-    public void environmentPrepared(ConfigurableEnvironment environment) {
+    public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext,
+                                    ConfigurableEnvironment environment) {
     }
 
     @Override
